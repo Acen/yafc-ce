@@ -12,7 +12,7 @@ public class BackslashTolerantZipArchiveTests : IDisposable {
             var clean = archive.CreateEntry("mod/info.json");
             using (var s = clean.Open())
                 s.Write("clean"u8);
-            // dirty entry - using reflection to do rename to our testcase because ZipArchive normalizes FullName *facepalm*
+            // dirty entry - using reflection to do rename to our testcase because ZipArchive normalizes FullName (unlike powershell's compress-archive)
             var dirty = archive.CreateEntry("PLACEHOLDER");
             using (var s = dirty.Open())
                 s.Write("dirty"u8);
@@ -47,8 +47,7 @@ public class BackslashTolerantZipArchiveTests : IDisposable {
     public static readonly MemoryStream TestZip;
 
     [Fact]
-    // It hurts my soul that I'm testing reflection for a test, but it felt too risky to trust it blindly. 
-    // So just ensuring the built-in logic of how ZipArchive handles duplicate names still throws during normalization
+    // Ensuring ZipArchive handles duplicate names still throws during normalization
     public void DuplicateEntryNames_AfterNormalization_Throws() {
         var ms = new MemoryStream();
         using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true)) {
