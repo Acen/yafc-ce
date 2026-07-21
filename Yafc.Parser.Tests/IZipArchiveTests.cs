@@ -1,4 +1,4 @@
-using Yafc.Parser.Tests;
+namespace Yafc.Parser.Tests;
 
 public class IZipArchiveTests {
     public static IEnumerable<object []> Archives() {
