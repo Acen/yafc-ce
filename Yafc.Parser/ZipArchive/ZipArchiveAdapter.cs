@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 
-internal sealed class ZipArchiveAdapter: IZipArchive {
+internal sealed class ZipArchiveAdapter : IZipArchive {
     readonly ZipArchive _archive;
 
     public ZipArchiveAdapter(Stream stream, bool leaveOpen = false) {
@@ -13,14 +13,14 @@ internal sealed class ZipArchiveAdapter: IZipArchive {
 
     public IReadOnlyCollection<IZipEntry> Entries { get; }
 
-    public IZipEntry? GetEntry (string path) => _archive.GetEntry(path) is {} e ? new ZipEntryAdapter(e): null;
+    public IZipEntry? GetEntry(string path) => _archive.GetEntry(path) is { } e ? new ZipEntryAdapter(e) : null;
     public void Dispose() => _archive.Dispose();
 }
 
-internal sealed class ZipEntryAdapter(ZipArchiveEntry entry): IZipEntry {
-public string FullName => entry.FullName;
-       public string Name => entry.Name;
-       public long Length => entry.Length;
-       public uint Crc32 => entry.Crc32;
-       public Stream Open() => entry.Open();
+internal sealed class ZipEntryAdapter(ZipArchiveEntry entry) : IZipEntry {
+    public string FullName => entry.FullName;
+    public string Name => entry.Name;
+    public long Length => entry.Length;
+    public uint Crc32 => entry.Crc32;
+    public Stream Open() => entry.Open();
 }

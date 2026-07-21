@@ -1,7 +1,7 @@
-namespace Yafc.Parser.Tests;
+﻿namespace Yafc.Parser.Tests;
 
 public class IZipArchiveTests {
-    public static IEnumerable<object []> Archives() {
+    public static IEnumerable<object[]> Archives() {
         yield return [new BackslashTolerantZipArchive(TestZip, leaveOpen: true)];
         yield return [new ZipArchiveAdapter(TestZip, leaveOpen: true)];
     }

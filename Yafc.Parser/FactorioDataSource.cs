@@ -178,7 +178,7 @@ public static partial class FactorioDataSource {
             if (fileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) {
                 FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
                 IZipArchive zipArchive = new BackslashTolerantZipArchive(fileStream);
-                var infoEntry = zipArchive.Entries.FirstOrDefault(x => 
+                var infoEntry = zipArchive.Entries.FirstOrDefault(x =>
                     x.Name.Equals("info.json", StringComparison.OrdinalIgnoreCase) &&
                     x.FullName.IndexOf('/') == x.FullName.Length - "info.json".Length - 1);
 

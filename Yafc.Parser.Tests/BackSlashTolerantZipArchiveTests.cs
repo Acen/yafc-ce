@@ -1,16 +1,13 @@
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using System.Text;
 
 namespace Yafc.Parser.Tests;
 
-public class BackslashTolerantZipArchiveTests : IDisposable
-{
-    static BackslashTolerantZipArchiveTests()
-    {
+public class BackslashTolerantZipArchiveTests : IDisposable {
+    static BackslashTolerantZipArchiveTests() {
         var ms = new MemoryStream();
-        using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true))
-        {
+        using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true)) {
             // clean entry
             var clean = archive.CreateEntry("mod/info.json");
             using (var s = clean.Open())
@@ -25,16 +22,14 @@ public class BackslashTolerantZipArchiveTests : IDisposable
         TestZip = ms;
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
         TestZip.Position = 0;
     }
 
     /**
     ZipArchiveEntry be sealed.
     **/
-    static void RenameEntry(ZipArchiveEntry entry, string newName)
-    {
+    static void RenameEntry(ZipArchiveEntry entry, string newName) {
         var nameField = typeof(ZipArchiveEntry).GetField(
             "_storedEntryName",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
@@ -54,11 +49,9 @@ public class BackslashTolerantZipArchiveTests : IDisposable
     [Fact]
     // It hurts my soul that I'm testing reflection for a test, but it felt too risky to trust it blindly. 
     // So just ensuring the built-in logic of how ZipArchive handles duplicate names still throws during normalization
-    public void DuplicateEntryNames_AfterNormalization_Throws()
-    {
+    public void DuplicateEntryNames_AfterNormalization_Throws() {
         var ms = new MemoryStream();
-        using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true))
-        {
+        using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true)) {
             archive.CreateEntry("mod/info.json");
             var dup = archive.CreateEntry("PLACEHOLDER");
             using (var s = dup.Open())
@@ -71,8 +64,7 @@ public class BackslashTolerantZipArchiveTests : IDisposable
     }
 
     [Fact]
-    public void FullName_IsNormalized()
-    {
+    public void FullName_IsNormalized() {
         TestZip.Position = 0;
         using var archive = new BackslashTolerantZipArchive(TestZip, true);
 
@@ -81,16 +73,14 @@ public class BackslashTolerantZipArchiveTests : IDisposable
     }
 
     [Fact]
-    public void GetEntry_NormalizesArgument()
-    {
+    public void GetEntry_NormalizesArgument() {
         using var archive = new BackslashTolerantZipArchive(TestZip, true);
         Assert.NotNull(archive.GetEntry("mod/info.json"));
         Assert.NotNull(archive.GetEntry("mod\\info.json"));
     }
 
     [Fact]
-    public void Dispose_ClosesUnderlyingStream_WhenLeaveOpenFalse()
-    {
+    public void Dispose_ClosesUnderlyingStream_WhenLeaveOpenFalse() {
         var ms = new MemoryStream(TestZip.ToArray());
         var archive = new BackslashTolerantZipArchive(ms, leaveOpen: false);
         archive.Dispose();
@@ -98,15 +88,13 @@ public class BackslashTolerantZipArchiveTests : IDisposable
     }
 
     [Fact]
-    public void GetEntry_MissingEntry_ReturnsNull()
-    {
+    public void GetEntry_MissingEntry_ReturnsNull() {
         using var archive = new BackslashTolerantZipArchive(TestZip, leaveOpen: true);
         Assert.Null(archive.GetEntry("nonexistent/file.lua"));
     }
 
     [Fact]
-    public void Entry_Name_IsAccessible()
-    {
+    public void Entry_Name_IsAccessible() {
         using var archive = new BackslashTolerantZipArchive(TestZip, leaveOpen: true);
         var entry = archive.GetEntry("mod/info.json")!;
         Assert.Equal("info.json", entry.Name);
