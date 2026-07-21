@@ -18,8 +18,6 @@ internal sealed class BackslashTolerantZipEntry: IZipEntry
            _entry = entry;
            FullName = entry.FullName.Replace('\\', '/');
        }
-
-       public static implicit operator ZipArchiveEntry(BackslashTolerantZipEntry e) => e._entry;
    }
 
 internal sealed class BackslashTolerantZipArchive : IZipArchive
